@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>命理知识库对比展示器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .comparison-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 30px;
+        }
+        
+        .knowledge-panel {
+            background: #f8f9fa;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .panel-header {
+            padding: 20px;
+            color: white;
+            text-align: center;
+            font-size: 1.4em;
+            font-weight: bold;
+        }
+        
+        .bazi-header {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+        
+        .ziwei-header {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+        }
+        
+        .panel-content {
+            padding: 25px;
+            height: calc(100vh - 250px);
+            overflow-y: auto;
+        }
+        
+        .section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .section h3 {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+            color: #333;
+        }
+        
+        .bazi-section h3 {
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+        
+        .ziwei-section h3 {
+            border-color: #9b59b6;
+            color: #9b59b6;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid;
+        }
+        
+        .bazi-card {
+            border-left-color: #e74c3c;
+        }
+        
+        .ziwei-card {
+            border-left-color: #9b59b6;
+        }
+        
+        .card h4 {
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+        
+        .bazi-card h4 {
+            color: #c0392b;
+        }
+        
+        .ziwei-card h4 {
+            color: #8e44ad;
+        }
+        
+        .card-content {
+            font-size: 0.9em;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background: #34495e;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .bazi-table th {
+            background: #c0392b;
+        }
+        
+        .ziwei-table th {
+            background: #8e44ad;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .element-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin: 2px;
+        }
+        
+        .wood { background: #c8e6c9; color: #2e7d32; }
+        .fire { background: #ffcdd2; color: #c62828; }
+        .earth { background: #ffecb3; color: #ff8f00; }
+        .metal { background: #e1f5fe; color: #0277bd; }
+        .water { background: #e0f2f1; color: #00695c; }
+        
+        .stem-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin: 2px;
+            background: #3498db;
+            color: white;
+        }
+        
+        .branch-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin: 2px;
+            background: #2ecc71;
+            color: white;
+        }
+        
+        .pattern-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin: 2px;
+            background: #f39c12;
+            color: white;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .bazi-stat .stat-number {
+            color: #e74c3c;
+        }
+        
+        .ziwei-stat .stat-number {
+            color: #9b59b6;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+        }
+        
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #c62828;
+        }
+        
+        .success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #2e7d32;
+        }
+        
+        pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>☯️ 命理知识库对比展示器</h1>
+            <p>八字知识库 vs 紫微知识库 对比分析</p>
+        </div>
+        
+        <div class="comparison-layout">
+            <!-- 八字知识库面板 -->
+            <div class="knowledge-panel">
+                <div class="panel-header bazi-header">
+                    📊 八字知识库 (bazi-knowledge.js)
+                </div>
+                <div class="panel-content" id="baziContent">
+                    <div class="loading">正在加载八字知识库...</div>
+                </div>
+            </div>
+            
+            <!-- 紫微知识库面板 -->
+            <div class="knowledge-panel">
+                <div class="panel-header ziwei-header">
+                    🔮 紫微知识库 (ziwei-knowledge.js)
+                </div>
+                <div class="panel-content" id="ziweiContent">
+                    <div class="loading">正在加载紫微知识库...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入两个知识库 -->
+    <script src="bazi-knowledge.js"></script>
+    <script src="ziwei-knowledge.js"></script>
+    
+    <script>
+        // 页面加载完成后初始化
+        window.addEventListener('load', function() {
+            setTimeout(initializeComparison, 1000); // 等待脚本完全加载
+        });
+        
+        function initializeComparison() {
+            const baziPanel = document.getElementById('baziContent');
+            const ziweiPanel = document.getElementById('ziweiContent');
+            
+            try {
+                // 检查知识库是否加载成功
+                const baziLoaded = typeof window.BAZI_CONSTANTS !== 'undefined';
+                const ziweiLoaded = typeof window.ZiweiConstants !== 'undefined';
+                
+                if (!baziLoaded && !ziweiLoaded) {
+                    showErrorMessage('两个知识库都未加载成功，请检查文件路径');
+                    return;
+                }
+                
+                // 渲染八字知识库
+                if (baziLoaded) {
+                    renderBaziKnowledge(baziPanel);
+                } else {
+                    baziPanel.innerHTML = '<div class="error">❌ 八字知识库加载失败</div>';
+                }
+                
+                // 渲染紫微知识库
+                if (ziweiLoaded) {
+                    renderZiweiKnowledge(ziweiPanel);
+                } else {
+                    ziweiPanel.innerHTML = '<div class="error">❌ 紫微知识库加载失败</div>';
+                }
+                
+            } catch (error) {
+                console.error('初始化错误:', error);
+                showErrorMessage('知识库加载过程中出现错误: ' + error.message);
+            }
+        }
+        
+        function showErrorMessage(message) {
+            document.querySelector('.comparison-layout').innerHTML = `
+                <div style="grid-column: 1 / -1; padding: 30px;">
+                    <div class="error">
+                        <h3>⚠️ 加载错误</h3>
+                        <p>${message}</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function renderBaziKnowledge(container) {
+            // 添加安全检查
+            if (!window.BAZI_CONSTANTS) {
+                container.innerHTML = `
+                    <div class="error">
+                        <h3>❌ 八字知识库数据未正确加载</h3>
+                        <p>请检查 bazi-knowledge.js 文件是否正确导出 BAZI_CONSTANTS</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const constants = window.BAZI_CONSTANTS;
+            container.innerHTML = '';
+            
+            // 统计信息
+            const stats = {
+                天干数量: constants.HEAVENLY_STEMS.length,
+                地支数量: constants.EARTHLY_BRANCHES.length,
+                纳音数量: Object.keys(constants.NAYIN_WUXING).length,
+                格局种类: Object.keys(constants.PATTERNS).length,
+                神煞数量: Object.keys(constants.SHENSHA).length
+            };
+            
+            const statsSection = document.createElement('div');
+            statsSection.className = 'section bazi-section';
+            statsSection.innerHTML = `
+                <h3>📈 核心统计数据</h3>
+                <div class="stats-grid">
+                    ${Object.entries(stats).map(([label, value]) => `
+                        <div class="stat-card bazi-stat">
+                            <div class="stat-number">${value}</div>
+                            <div class="stat-label">${label}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            container.appendChild(statsSection);
+            
+            // 天干地支
+            const stemsBranchesSection = document.createElement('div');
+            stemsBranchesSection.className = 'section bazi-section';
+            stemsBranchesSection.innerHTML = `
+                <h3>🔤 天干地支体系</h3>
+                <div class="grid">
+                    <div class="card bazi-card">
+                        <h4>十天干</h4>
+                        <div class="card-content">
+                            ${constants.HEAVENLY_STEMS.map(stem => 
+                                `<span class="stem-badge">${stem}</span>`
+                            ).join(' ')}
+                        </div>
+                    </div>
+                    <div class="card bazi-card">
+                        <h4>十二地支</h4>
+                        <div class="card-content">
+                            ${constants.EARTHLY_BRANCHES.map(branch => 
+                                `<span class="branch-badge">${branch}</span>`
+                            ).join(' ')}
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(stemsBranchesSection);
+            
+            // 五行纳音
+            const nayinSection = document.createElement('div');
+            nayinSection.className = 'section bazi-section';
+            nayinSection.innerHTML = `
+                <h3>🎵 纳音五行</h3>
+                <table class="bazi-table">
+                    <thead>
+                        <tr>
+                            <th>纳音</th>
+                            <th>五行</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${Object.entries(constants.NAYIN_WUXING).slice(0, 10).map(([nayin, element]) => `
+                            <tr>
+                                <td>${nayin}</td>
+                                <td><span class="element-badge ${element}">${element}</span></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                <p style="margin-top: 10px; color: #666; font-size: 0.9em;">
+                    显示前10项，共${Object.keys(constants.NAYIN_WUXING).length}项
+                </p>
+            `;
+            container.appendChild(nayinSection);
+            
+            // 主要格局
+            const patternsSection = document.createElement('div');
+            patternsSection.className = 'section bazi-section';
+            patternsSection.innerHTML = `
+                <h3>🎯 主要格局</h3>
+                <div class="grid">
+                    ${Object.entries(constants.PATTERNS).slice(0, 6).map(([name, pattern]) => `
+                        <div class="card bazi-card">
+                            <h4>${name}</h4>
+                            <div class="card-content">
+                                <span class="pattern-badge">${pattern.level}</span>
+                                <p>${pattern.description}</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                <p style="margin-top: 10px; color: #666; font-size: 0.9em;">
+                    显示前6种格局，共${Object.keys(constants.PATTERNS).length}种
+                </p>
+            `;
+            container.appendChild(patternsSection);
+            
+            // 神煞系统示例
+            const shenshaSection = document.createElement('div');
+            shenshaSection.className = 'section bazi-section';
+            shenshaSection.innerHTML = `
+                <h3>⭐ 神煞系统 (示例)</h3>
+                <table class="bazi-table">
+                    <thead>
+                        <tr>
+                            <th>神煞名称</th>
+                            <th>类型</th>
+                            <th>力量等级</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${Object.entries(constants.SHENSHA).slice(0, 8).map(([name, info]) => `
+                            <tr>
+                                <td>${name}</td>
+                                <td>${info.type}</td>
+                                <td>${info.power}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                <p style="margin-top: 10px; color: #666; font-size: 0.9em;">
+                    显示前8项，共${Object.keys(constants.SHENSHA).length}项神煞
+                </p>
+            `;
+            container.appendChild(shenshaSection);
+            
+            // 原始数据结构
+            const rawDataSection = document.createElement('div');
+            rawDataSection.className = 'section bazi-section';
+            rawDataSection.innerHTML = `
+                <h3>💾 原始数据结构</h3>
+                <details>
+                    <summary style="cursor: pointer; color: #c0392b; font-weight: bold;">点击查看完整数据结构</summary>
+                    <pre>${JSON.stringify({
+                        HEAVENLY_STEMS: constants.HEAVENLY_STEMS,
+                        EARTHLY_BRANCHES: constants.EARTHLY_BRANCHES,
+                        STEMS_WUXING: constants.STEMS_WUXING,
+                        BRANCHES_WUXING: constants.BRANCHES_WUXING,
+                        PATTERNS: Object.keys(constants.PATTERNS),
+                        SHENSHA: Object.keys(constants.SHENSHA)
+                    }, null, 2)}</pre>
+                </details>
+            `;
+            container.appendChild(rawDataSection);
+        }
+        
+        function renderZiweiKnowledge(container) {
+            // 添加安全检查
+            if (!window.ZiweiConstants) {
+                container.innerHTML = `
+                    <div class="error">
+                        <h3>❌ 紫微知识库数据未正确加载</h3>
+                        <p>请检查 ziwei-knowledge.js 文件是否正确导出 ZiweiConstants</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const constants = window.ZiweiConstants;
+            container.innerHTML = '';
+            
+            // 统计信息
+            const stats = {
+                主星数量: Object.keys(constants.ZIWEI_MAIN_STARS).length,
+                吉星数量: Object.keys(constants.LUCKY_STARS).length,
+                凶星数量: Object.keys(constants.UNLUCKY_STARS).length,
+                宫位数量: Object.keys(constants.PALACE_DEFINITIONS).length,
+                四化类型: Object.keys(constants.SIHUA_MEANINGS).length
+            };
+            
+            const statsSection = document.createElement('div');
+            statsSection.className = 'section ziwei-section';
+            statsSection.innerHTML = `
+                <h3>📈 核心统计数据</h3>
+                <div class="stats-grid">
+                    ${Object.entries(stats).map(([label, value]) => `
+                        <div class="stat-card ziwei-stat">
+                            <div class="stat-number">${value}</div>
+                            <div class="stat-label">${label}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            container.appendChild(statsSection);
+            
+            // 十四主星
+            const mainStarsSection = document.createElement('div');
+            mainStarsSection.className = 'section ziwei-section';
+            mainStarsSection.innerHTML = `
+                <h3>🌟 十四主星</h3>
+                <div class="grid">
+                    ${Object.entries(constants.ZIWEI_MAIN_STARS).map(([name, info]) => `
+                        <div class="card ziwei-card">
+                            <h4>${name}</h4>
+                            <div class="card-content">
+                                <span class="element-badge ${info.element}">${info.element}</span>
+                                <p>${info.desc}</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            container.appendChild(mainStarsSection);
+            
+            // 六吉星
+            const luckyStarsSection = document.createElement('div');
+            luckyStarsSection.className = 'section ziwei-section';
+            luckyStarsSection.innerHTML = `
+                <h3>✨ 六吉星</h3>
+                <div class="grid">
+                    ${Object.entries(constants.LUCKY_STARS).map(([name, info]) => `
+                        <div class="card ziwei-card">
+                            <h4>${name}</h4>
+                            <div class="card-content">
+                                <span class="element-badge ${info.element}">${info.element}</span>
+                                <p>${info.desc}</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            container.appendChild(luckyStarsSection);
+            
+            // 六凶星
+            const unluckyStarsSection = document.createElement('div');
+            unluckyStarsSection.className = 'section ziwei-section';
+            unluckyStarsSection.innerHTML = `
+                <h3>⚡ 六凶星</h3>
+                <div class="grid">
+                    ${Object.entries(constants.UNLUCKY_STARS).map(([name, info]) => `
+                        <div class="card ziwei-card">
+                            <h4>${name}</h4>
+                            <div class="card-content">
+                                <span class="element-badge ${info.element}">${info.element}</span>
+                                <p>${info.desc}</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            container.appendChild(unluckyStarsSection);
+            
+            // 十二宫位
+            const palacesSection = document.createElement('div');
+            palacesSection.className = 'section ziwei-section';
+            palacesSection.innerHTML = `
+                <h3>🏛️ 十二宫位</h3>
+                <table class="ziwei-table">
+                    <thead>
+                        <tr>
+                            <th>宫位名称</th>
+                            <th>相对位置</th>
+                            <th>描述</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${Object.entries(constants.PALACE_DEFINITIONS).map(([name, info]) => `
+                            <tr>
+                                <td><strong>${name}</strong></td>
+                                <td>第${info.index + 1}宫</td>
+                                <td>${info.desc}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            container.appendChild(palacesSection);
+            
+            // 四化系统
+            const sihuaSection = document.createElement('div');
+            sihuaSection.className = 'section ziwei-section';
+            sihuaSection.innerHTML = `
+                <h3>💫 四化系统</h3>
+                <table class="ziwei-table">
+                    <thead>
+                        <tr>
+                            <th>天干</th>
+                            <th>化禄</th>
+                            <th>化权</th>
+                            <th>化科</th>
+                            <th>化忌</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${Object.entries(constants.GAN_SIHUA_TABLE).map(([gan, sihua]) => `
+                            <tr>
+                                <td><span class="stem-badge">${gan}</span></td>
+                                <td>${sihua.禄 || '-'}</td>
+                                <td>${sihua.权 || '-'}</td>
+                                <td>${sihua.科 || '-'}</td>
+                                <td>${sihua.忌 || '-'}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            container.appendChild(sihuaSection);
+            
+            // 核心规则
+            const rulesSection = document.createElement('div');
+            rulesSection.className = 'section ziwei-section';
+            rulesSection.innerHTML = `
+                <h3>⚖️ 核心规则体系</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div>
+                        <h4>三方四正规则</h4>
+                        <pre style="font-size: 0.8em;">${JSON.stringify(constants.SANFANG_SIZHENG_RULES, null, 2)}</pre>
+                    </div>
+                    <div>
+                        <h4>星曜会照规则</h4>
+                        <pre style="font-size: 0.8em;">${JSON.stringify(constants.STAR_CONJUNCTION_RULES, null, 2)}</pre>
+                    </div>
+                </div>
+            `;
+            container.appendChild(rulesSection);
+            
+            // 原始数据结构
+            const rawDataSection = document.createElement('div');
+            rawDataSection.className = 'section ziwei-section';
+            rawDataSection.innerHTML = `
+                <h3>💾 原始数据结构</h3>
+                <details>
+                    <summary style="cursor: pointer; color: #8e44ad; font-weight: bold;">点击查看完整数据结构</summary>
+                    <pre>${JSON.stringify({
+                        ZIWEI_MAIN_STARS: Object.keys(constants.ZIWEI_MAIN_STARS),
+                        LUCKY_STARS: Object.keys(constants.LUCKY_STARS),
+                        UNLUCKY_STARS: Object.keys(constants.UNLUCKY_STARS),
+                        PALACE_DEFINITIONS: Object.keys(constants.PALACE_DEFINITIONS),
+                        SIHUA_MEANINGS: Object.keys(constants.SIHUA_MEANINGS)
+                    }, null, 2)}</pre>
+                </details>
+            `;
+            container.appendChild(rawDataSection);
+        }
+    </script>
+</body>
+</html>
